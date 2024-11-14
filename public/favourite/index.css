@@ -1,0 +1,89 @@
+
+
+/* Card Container Styles */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Card Styles */
+.card {
+    background-color: #b2dfdb;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.card img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.card h3 {
+    margin: 10px 0;
+    font-size: 1.5em;
+}
+
+.card p {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* Button Container Styles */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #00796b; 
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+    margin: 0 5px; 
+    flex: 1; 
+    text-align: center; 
+}
+
+button:hover {
+    background-color: #004d40; 
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 90%;
+    }
+
+    .button-container {
+        flex-direction: column;
+    }
+
+    button {
+        margin: 5px 0;
+    }
+}

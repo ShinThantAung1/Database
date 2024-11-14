@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model favourite {
+  id        Int      @id @default(autoincrement())
+  memberId  Int      @map("member_id")
+  productId Int      @map("product_id")
+  addedDate DateTime @default(now()) @map("added_date") @db.Timestamp(6)
+  member    member   @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product   product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model member {
+  id                   Int         @id @default(autoincrement())
+  username             String      @unique @db.VarChar(50)
+  email                String      @unique @db.VarChar(50)
+  dob                  DateTime    @db.Date
+  password             String      @db.VarChar(255)
+  role                 Int
+  gender               String      @db.Char(1)
+  lastLoginOn          DateTime?   @default(now()) @map("last_login_on") @db.Timestamp(6)
+  clv                  Decimal?    @db.Decimal(10, 3)
+  runningTotalSpending Decimal?    @map("running_total_spending") @db.Decimal(10, 3)
+  favourite            favourite[]
+  memberRole           memberRole  @relation(fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_member_role_id")
+  saleOrder            saleOrder[]
+  carts Cart[]
+}
+
+model memberRole {
+  id     Int      @id @default(autoincrement())
+  name   String?  @db.VarChar(25)
+  member member[]
+
+  @@map("member_role")
+}
+
+model product {
+  id             Int             @id @default(autoincrement())
+  name           String?         @db.VarChar(255)
+  description    String?
+  unitPrice      Decimal         @map("unit_price") @db.Decimal
+  stockQuantity  Decimal         @default(0) @map("stock_quantity") @db.Decimal
+  country        String?         @db.VarChar(100)
+  productType    String?         @map("product_type") @db.VarChar(50)
+  imageUrl       String?         @default("/images/product.png") @map("image_url") @db.VarChar(255)
+  manufacturedOn DateTime?       @map("manufactured_on") @db.Timestamp(6)
+  favourite      favourite[]
+  saleOrderItem  saleOrderItem[]
+  carts Cart[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id              Int           @id @default(autoincrement())
+  saleOrderItemId Int           @map("sale_order_item_id")
+  rating          Int
+  reviewText      String        @map("review_text") @db.VarChar(100)
+  reviewDate      DateTime      @default(dbgenerated("CURRENT_DATE")) @map("review_date") @db.Date
+  saleOrderItem   saleOrderItem @relation(fields: [saleOrderItemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model saleOrder {
+  id            Int             @id @default(autoincrement())
+  memberId      Int?            @map("member_id")
+  orderDatetime DateTime        @map("order_datetime") @db.Timestamp(6)
+  status        String?         @db.VarChar(10)
+  member        member?         @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_member")
+  saleOrderItem saleOrderItem[]
+
+  @@map("sale_order")
+}
+
+model saleOrderItem {
+  id          Int       @id @default(autoincrement())
+  saleOrderId Int       @map("sale_order_id")
+  productId   Int       @map("product_id")
+  quantity    Decimal   @db.Decimal
+  reviews     reviews[]
+  product     product   @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_item_product")
+  saleOrder   saleOrder @relation(fields: [saleOrderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_item_sale_order")
+
+  @@map("sale_order_item")
+}
+
+model supplier {
+  id             Int       @id @default(autoincrement())
+  companyName    String    @map("company_name") @db.VarChar(255)
+  descriptor     String?
+  address        String?   @db.VarChar(255)
+  country        String    @db.VarChar(100)
+  contactEmail   String    @map("contact_email") @db.VarChar(50)
+  companyUrl     String?   @map("company_url") @db.VarChar(255)
+  foundedDate    DateTime? @map("founded_date") @db.Date
+  staffSize      Int?      @map("staff_size")
+  specialization String?   @db.VarChar(100)
+  isActive       Boolean?  @map("is_active")
+
+  @@index([contactEmail], name: "idx_supplier_contact_email")
+  @@index([country, companyName, specialization], name: "idx_supplier_country_company_name_specialization")
+  @@index([country, specialization], name: "idx_supplier_country_specialization")
+  @@index([foundedDate], name: "idx_supplier_founded_date")
+  @@index([foundedDate, country], name: "idx_supplier_founded_date_country")
+  @@index([isActive, staffSize], name: "idx_supplier_is_active_staff_size")
+  @@index([specialization, staffSize], name: "idx_supplier_specialization_staff_size")
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  memberId  Int
+  productId Int
+  quantity  Int
+
+  member    member   @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product   product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model TempInsufficientItems {
+  memberId Int
+  itemName String
+
+  @@id([memberId, itemName])
+  @@map("temp_insufficient_items")
+}

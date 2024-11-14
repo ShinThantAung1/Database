@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout Page</title>
+    <link href="/main.css" rel="stylesheet" />
+    <link href="/index.css" rel="stylesheet" />
+    <link href="./index.css" rel="stylesheet" />
+    <script src="./index.js" type="text/javascript"></script>
+</head>
+<body>
+    <header>
+        <a href="../../../product/">Product</a>
+        <a href="../../../review/">Review</a>
+        <a href="../../../favourite/">Favourite</a>
+        <a href="../cart/">Cart</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </header>
+    <section>
+        <h1>Checkout</h1>
+        <div id="checkout-summary"></div>
+        <form id="payment-form">
+            <fieldset>
+                <legend>Shipping Options</legend>
+                <p><input type="radio" name="shippingOption" value="standard" checked> Standard Shipping - $5.00</p>
+                <p><input type="radio" name="shippingOption" value="express"> Express Shipping - $15.00</p>
+                <p><input type="radio" name="shippingOption" value="overnight"> Overnight Shipping - $25.00</p>
+            </fieldset>
+            <fieldset>
+                <legend>Payment Details</legend>
+                <p>
+                    <label for="cardNumber">Card Number:</label>
+                    <input type="text" id="cardNumber" name="cardNumber" required>
+                </p>
+                <p>
+                    <label for="expiryDate">Expiry Date:</label>
+                    <input type="text" id="expiryDate" name="expiryDate" required>
+                </p>
+                <p>
+                    <label for="cvv">CVV:</label>
+                    <input type="text" id="cvv" name="cvv" required>
+                </p>
+                <p>
+                    <label for="billingAddress">Billing Address:</label>
+                    <textarea id="billingAddress" name="billingAddress" required></textarea>
+                </p>
+                <button type="submit">Complete Purchase</button>
+            </fieldset>
+        </form>
+    </section>
+    <script src="../../../auth.js" type="text/javascript"></script>
+</body>
+</html>
